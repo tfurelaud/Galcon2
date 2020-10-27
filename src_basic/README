@@ -1,0 +1,80 @@
+Mode d'emploi du programme :
+
+Pour lancer le jeu, il vous suffit d'exécuter le main se trouvant dans Game.java. Aucune ligne de commande n'est demandée au lancement. 
+
+Règles du jeu :
+
+Une fois ceci fait, la fenêtre graphique va se lancer vous demandant de choisir entre deux propositions : 
+	-charger une partie (load game), où la dernière partie sauvegardée se lancera,
+
+	-ou commencer une nouvelle partie (new game) où un nouveau choix sera à faire. Jouer en 1 contre 1 ou jouer contre l'ordinateur.
+
+Si vous avez décidé de jouer contre l'ordinateur, il vous faudra attendre entre 15 et 20 secondes le temps que le jeu se génère et pour permettre une fluidité lors de la partie. Pour le 1 contre 1 le jeu se lancera instantanément. 
+Ensuite la partie commence. Une planète de couleur est au joueur A et l'autre est au joueur B ou à l'IA suivant votre choix. Chaque planète de couleur produit des vaisseaux et peut attaquer une autre planète. Vous pouvez décider d'attaquer une planète adverse (neutre ou à l'autre joueur) ou d'envoyer des vaisseaux à une de vos planètes afin d'augmenter son stock. Vous pouvez choisir ces deux planètes, en cliquant glissant de la planète source vers la planète à attaquer. Alors le nombre de vaisseau sera décrémenté du pourcentage lancé(que vous pouvez régler avec la jauge dans les deux coins inférieur de l'écran) de votre planète et le même nombre de vaisseaux sera envoyé vers la planète sélectionnée. Le stock de vaisseaux de la planète visée est donc décrémenté du nombre de vaisseaux envoyé multiplié par la puissance d'attaque des vaisseaux(choisi aléatoirement au début de la partie), si la planète ne vous appartient pas, ou alors le nombre de vaisseaux sur la planète visée est augmenté du nombre de vaisseaux envoyés si elle vous appartient. Si lors de votre envoie de vaisseaux la planète visée passe en score négatif alors cette planète vous appartiendra. Vous pouvez sauvegarder votre partie en cours à n'importe quel moment en cliquant sur le bouton en haut à gauche de l'écran (save). Vous pouvez aussi changer la planète de destination de tout vos vaisseaux en vol, en cliquant sur CTRL + clique gauche si vous êtes le joueur A et avec SHIFT + clique gauche si vous êtes le joueur B.
+
+Le premier joueur n'ayant plus de planète perd, l'autre gagne.
+
+Description des implémentations :
+
+Class Algo et Class Cell: 
+	
+	Pour ces classes on s'est inspiré du travail de Sylvain Saurel (https://www.youtube.com/watch?v=oeT8B8sqbxQ&t=1571s) qui explique son implémentation de l'algorithme A* pour créer un chemin d'un point A à un point B, sans passer par des points prédéfinis dans un double tableau. Dans cet algorithme (Algo) on demande donc à créer un chemin d'un point A à une planète sans passer par les planètes qui ne sont pas la planète de destination. On crée donc un double tableau "blocked" qui sont les points par lesquels nous ne devons pas passer. Pour que notre algorithme ne soit pas trop long nous créons une grille de point, d'une longueur de la longueur de la game / 2 et d'une hauteur de la hauteur de la game / 2. On stock ensuite notre chemin dans un double tableau que l'on retourne. Ce chemin sera donc le chemin utilisé par les vaisseaux (Nous y reviendrons dans les classes Vessel et Planet). La méthode searchPath(Game game, ArrayList<Planet> list,int x, int y, Planet desti) retourne donc le chemin entre (x,y) et la planète desti, et bloque tout les points qui sont dans la liste de planète, list, et qui ne sont pas desti.
+L'autre méthode que nous avons implémentée est deleteTab qui remplace toutes les valeurs du double tableau tab par 0, pour qu’il soit plus simple de gérer plusieurs tableaux par la suite.
+
+
+IA :
+
+	Nous avons décidé de traiter l'IA comme un joueur lambda. Donc cette classe hérite de la classe Player c'est pourquoi son nom sera toujours B, et sa couleur rouge. 
+
+Game :
+
+	On peut définir et modifier la hauteur et la largeur de la fenêtre de jeu, puis l'espace minimum que l'on va devoir respecter entre nos planètes ainsi que le nombre de planètes neutre au démarrage du jeu. On crée aussi deux liste, une de planètes et une autre de vaisseaux. On instancie aussi 2 joueur, A et B, chacun d'une couleur différente. On tire aléatoirement le temps de production entre deux nombres (ces deux nombres peuvent être changés) ainsi que la puissance des vaisseaux(identiquement, aléatoirement avec des bornes qui peuvent être changées).
+
+ 
+AnimationTimer ():
+
+	Un timer est créé pour qu'on puisse avoir la main sur le temps que prennent certaines taches, ce timer augmente de 1 à chaque fin de tour de boucle de l'AnimationTimer() et revient à 0 si il est égal à 100.
+	Un compteur de vaisseaux envoyées est créé pour qu'on puisse envoyer seulement 4 vaisseaux par 4 vaisseaux au maximum. Il est à 0 initialement et redevient 0 à chaque fois que le timer est divisible par 15. 
+
+Fonctionnalités : 
+
+
+- Au début nous nous trouvons dans le menu de démarrage. Donc tout d'abord on regarde si on est dans le menu grâce au booléen "firstMenu", ensuite :
+ 	- On regarde si on a cliqué sur le bouton de gauche et si on est toujours dans le premier menu, donc que le booléen secondMenu est faux. Si c'est le cas, alors l'utilisateur a cliqué sur "load game". On lit donc les informations dans le fichier. Donc pour le nombre de planètes neutres + 2 (pour le nombre de joueur), on lit l'objet et on le stock dans une variable de type Planet. On lit ensuite le propriétaire, puis on change la couleur de la planète suivant le nom du propriétaire. Pour finir, on lit et on stock dans les variable qu'on a définit au début de Game le temps de production, et la puissance des vaisseaux. Pour finir on lit AI, et si le booléen est vrai alors on instancie un IA. Et on finit par faire passer firstMenu et secondMenu à faux, puis un booléen gameStarted à vrai, qui nous servira à savoir si on est dans un menu ou pas dans l'AnimationTimer. 
+	
+	- On regarde si on clique sur le bouton de droite et si on dans le premier menu. Ce qui veut dire qu'on à cliqué sur "new game". On fait donc passé le booléen secondMenu à vrai, ce qui nous servira à afficher le deuxième menu (celui ou on doit choisir entre 1 vs IA et 1vs1) dans l'AnimationTimer(). 
+
+		- Puis on regarde si on clique sur le bouton de gauche et si on est dans le deuxième menu. Cela veut dire que l'utilisateur veut jouer contre l'IA. On passe donc gameStarted à vrai car la partie est lancée, le booléen AI à vrai, les deux menus à faux, on instancie l'IA et on affiche les infos de la partie. Comme le temps d'attente est assez long au lancement du jeu contre l'IA on a fait un écran de chargement. On passe donc un booléen loading à vrai pour afficher l'écran que l'on souhaite dans l'animationTimer.
+
+	- Ou alors on regarde si on clique sur le bouton de droite et si on est dans le deuxième menu. Cela veut dire qu'il va y avoir deux joueurs. Les deux menus passent donc à faux, gameStarted devient vrai. Pour finir on génère les planètes (generate_planet) puis on affiche les informations sur la partie. 
+
+- Pour le 1vsIA, on a donc décidé de charger tout les chemins possible avant même que la partie commence (d'où le temps de chargement), pour une plus grande fluidité lors du jeu. Ainsi lorsque l'IA choisira une planète dans la liste de planète de la partie, il n'aura qu'à chercher le chemin correspondant et le donner comme chemin a tout les vaisseaux qu'il veut envoyer. Cet IA n'est donc pas très avancé car il choisi la première planète qui n'est pas à lui dans la liste des planètes et envoie un nombre, choisi aléatoirement, de vaisseaux. 
+
+- Pour le 1 contre 1, il n'y a pas de temps de chargement car le chemin demandé est recherché directement quand le joueur a sélectionné la planète source et la planète de destination. Le temps d'envoie est donc plus lent que pour l'IA, le programme est moins lourd au début mais l'est un peu plus durant la partie. 
+
+-Lors de toute partie, le nombre de vaisseaux sur les planètes non neutre est augmenté du temps de production. Par exemple, si le temps de production est de 20 et que j'ai 50 vaisseaux sur ma planète, 1 seconde plus tard j'en aurai 70. DAns l'AnimationTimer(), nous parcourons la liste des planètes, et lorsque la planète n'est pas neutre, alors on ajoute à son nombre de vaisseau, le temps de production. Nous avons mis un timer pour que le nombre de vaisseau soit incrémenté seulement toutes les secondes et non à tout les tours de l'AnimationTimer().
+
+- Pour envoyer des vaisseaux, le joueur doit juste faire un cliquer-glisser de la planète dont il veut faire partir les vaisseaux vers celle ou il veut les faire aller. 
+Pour ce faire on regarde si le point récupéré par le mouseDragged est sur une planète. Si c'est le cas on stock cette planète dans une variable "desti" de type Planet, ainsi que la planète "source" grâce aux point récupéré avec le mousePressed, donc lorsque le joueur a commencé son cliquer-glisser. Par la suite on crée 4 tableaux. Chaque tableau contient un chemin et a un point de départ différent des autres. Grâce à cela on pourra faire décoller nos vaisseaux de 4 points différents autour de la planète source. Ensuite on parcourt la liste des vaisseaux tant que l'on n'a pas lancé le nombre de vaisseau voulu. Pour chaque vaisseau, on regarde si sa planète actuelle est la planète source. Si c'est le cas, le vaisseau prend comme chemin le premier tableau. On parcourt le tableau des vaisseaux jusqu'à ce qu'on ait tout parcouru ou jusqu’à ce qu'on ait envoyé le nombre de vaisseau demandé. Pour chaque vaisseau un autre tableau est choisi. Pour le premier vaisseau le premier tableau est choisi, pour le deuxième vaisseau le deuxième tableau est choisi, ..., pour le cinquième vaisseau le premier tableau est choisi et devient son chemin. Pour chaque vaisseau envoyé, son booléen "waiting" passe à vrai ce qui veut dire que le vaisseau est en attente de décollage. Cela nous servira pour que les vaisseaux ne se recouvre pas au décollage. Pour finir, on réinitialise le point de que l'on stock dans mousedragged à 0.
+
+-Lors d'un envoie de vaisseau, l'utilisateur peut facilement demander une redirection de ses vaisseaux qui se trouvent en déplacement. Il lui suffit d'appuyer sur CTRL + clique gauche si c'est le joueur A ou SHIFT + clique gauce si c'est le joueur B. Pour ce faire, lorsqu'un utilisateur clique, nous regardons si SHIFT ou CTRL est enfoncée. Si c'est le cas nous redirigeons les vaisseaux de ce joueur, défini grâce à la touche enfoncée. Pour cela nous parcourons la liste des vaisseaux de la partie et l'on regarde si le vaisseau appartient au joueur qui veut rediriger ses troupes, et si le vaisseau est en déplacement. Si c'est le cas on cherche un nouveau chemin partant des coordonnées du vaisseau, à la nouvelle planète de destination choisi par le joueur. Pour stocker la planète de destination, nous regardons sur qu'elle planète le joueur à cliqué grâce à la méthode isOnPlanet.
+
+-Si le vaisseau atterrit sur une planète qui n'a pas le même propriétaire que celle d'où il est lancé alors, la planète visée perd des vaisseaux (strenght exactement). Sinon, le joueur effectue un déplacement de troupe et donc le nombre de vaisseau sur la planète visée augmente de 1. 
+Pour implémenter ca, on regarde juste le propriétaire de la planète source, et on le compare à celui de la planète de destination. Puis on gère les différents cas. La méthode gérant ça est update position.
+
+Dans un premier temps cette méthode regarde si le vaisseau est sur la planète de destination grace à ses coordonnées et à ceux de la planète: 	
+		-Si c'est le cas, il regarde si le joueur est en mode attaque ou en mode déplacement de troupe grâce à la méthode attack():
+			-Si le joueur est en mode attaque on regarde si la réserve de vaisseaux de la planète de destination est égale ou inférieur à 0, dans ce cas là, la planète de destination change de propriétaire et son nombre de vaisseau augmente de 1, sinon la planète actuelle devient null car le vaisseau n'est plus sur la planète source mais sur celle de destination. La réserve de vaisseaux de la planète de destination est décrémentée du nombre de la puissance d'attaque du vaisseau. 
+			-Sinon le nombre de vaisseau de la planète de destination est augmenté de 1 car le joueur est en mode déplacement de troupe.
+		- Sinon, on change les coordonnées x et y du vaisseaux en parcourant le tableau vesselPath qui contient toutes les positions que le vaisseaux doit prendre pour arriver à la planète de destination.
+
+-À tout instant de la partie, les joueurs peuvent décider combien de vaisseaux ils veulent envoyer lors du prochain envoie. Grâce à une jauge se trouvant dans les coins inférieurs de l'écran, le joueur décidera quel pourcentage du nombre de vaisseau se trouvant sur la planète source il veut envoyer. 
+Pour implémenter cette fonctionnalité, nous regardons tout simplement si, lorsque qu'un joueur clique, il clique sur la bouton ou non grâce à la méthode isOnSelect. Si c'est le cas la coordonnée y du bouton devient la coordonnée y de la souris. Grâce à une formule mathématique nous affichons le pourcentage que le joueur à choisi d'envoyer et nous modifions le pourcentage du joueur, qui nous sera utile pour savoir combien de vaisseaux doivent être envoyé par la suite. 
+
+- Une partie peut être sauvegardée à n'importe quel moment grâce au bouton save. Grâce à la méthode isOn, lorsqu'un joueur clique, on regarde si il a cliqué sur save. Si c'est le cas on écrit toutes les informations dont nous avons besoin dans load pour retrouver la partie comme nous l'avons laissée. 
+
+- Un joueur gagne une partie lorsque son adversaire n'a plus de planète. On parcourt donc la liste des planète, et si un joueur n'a aucune planète, alors il perd et l'autre gagne. 
+ 
+Choses à améliorer et dysfonctionnements connus: 
+
+- Une erreur survient lors de la lecture d'un fichier vide et n'est pas géré.

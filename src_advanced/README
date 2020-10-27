@@ -1,0 +1,21 @@
+Pour cette version avancée nous avons implémenté 3 nouvelles fonctionnalitées. 
+
+Un joueur peut joueur contre 1, 2 où même 3 IA. 
+
+Pour cela nous créons 3 nouveaux boutons et 3 IAs qui sont au début à null. Suivant sur quel boutons clique le joueur on crée 1, 2 ou 3 IAs. Suivant le nombre d'IA renseigné, on crée des nouvelles planètes pour que chaque joueur(IA) est une planète au début de la partie. 
+Lorsque le joueur souhaite faire une redirection nous regardons si le booléen AI est à faux ou pas. Si il est à vrai seulement le joueur A peut procéder à une redirection. 
+Lors d'une sauvegarde on écrit dans le fichier le nombre d'IA présent dans la partie. Suivant le nombre que l'on va lire lors de la restauration d'une partie, on créera 1, 2 ou 3 IAs. 
+Pour vérifier si le joueur à perdu nous avons fait une nouvelle méthode lose() qui retourne un booléen et qui regarde si le joueur a encore des planètes ou non dans la liste de planète.
+Nous avons changé l'IA, qui maintenant pour chaque vaisseau, choisi une planète au hasard dans la partie qui n'est pas à lui et envoie des vaisseaux vers cette planète. 
+Dans l'AnimationTimer() nous avons à présent 3 itérateur pour la liste des vaisseaux, 1 pour le premier IA et le joueur, un deuxième pour le deuxième IA et un troisième pour le troisième. Chaque itérateur regarde si le vaisseau qu'il a, appartient ou non, à l'ia en question, puis enoie le vaisseau si c'est le cas.
+
+
+On peut jouer en 1 contre 1, ou en 1 contre 1 contre 1 ou encore en 1 contre 1 contre 1 contre 1.
+
+À l'image de l'IA nous demandons à l'utilisateur combien de joueurs il veut créer. Nous avons du changer la méthode isGameOver et maintenant on regarde si toutes les planètes non neutres appartiennent au même joueur. Si c'est le cas le joueur en question gagne. Chaque joueur peut rediriger ses troupes. Le joueur A doit cliquer + CTRL, le joueur B  cliquer + SHIFT, le joueur C doit cliquer gauche + cliquer molette et le joueur D doit ALT + cliquer(si deux touches ALT sont présentent sur le clavier il doit appuyer sur les deux en même temps puis cliquer). 
+
+
+De nouveaux vaisseaux sont utilisables. 
+
+Ces vaisseaux on deux fois plus de puissance qu'un vaisseau normal, et sont produit sur les planètes non neutres, au nombre de 1 par seconde. Le nombre initiale de ces vaisseaux est 0. Si l'on fait clique droit sur la planète, alors le nombre de vaisseau fort sera affiché. Pour envoyer des vaisseaux forts le cercle noir autour de la planète doit être présent. 
+Pour ce faire, on a crée une liste de vaisseau fort dans la partie. On gère alors ces vaisseaux, comme les vaisseaux normaux. Grâce a un itératuer dans l'AnimationTimer, leur position sera actualisée ainsi que leur nombre au sein des planètes. Suivant le mode de la planète au décollage du vaisseau, le vaisseau sera normal ou fort. 
